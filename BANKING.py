@@ -1,9 +1,7 @@
-print("====== Welcome to Banking ======")
-print("Create account: select 1 :")
-print("login account: select 2:")
-start = input(":")
-
-# ========================= create account ===================================================
+print("====== select the Banking option ======")
+print("do you want Create an account: select 1 :")
+print("do you want login your account: select 2:")
+# ========================= create your new account ===================================================
 import random
 
 def create_account():
@@ -17,9 +15,17 @@ def create_account():
         file.write(f"{account_num},{name},{password},{balance}\n")
 
     print(f"acount_num is {account_num} your account saved succsesfully!")
+#===========================history================================
+def story():
+    try:
+        with open("history.txt","r") as file:
+            print("history:")
+            for line in file:
+                print(line.strip())
+    except FileNotFoundError:
+        print("file is not found!")
 
-
-# ========================= load account =========================================
+# ========================= make dic: account =========================================
 def load_accounts():
     accounts = {}
     try:
@@ -38,13 +44,13 @@ def load_accounts():
         print("Accounts file not found!")
     
     return accounts
-# ========================= save account ====================================
+# ========================= save updates ====================================
 def save_new_updates(accounts):
     with open("accounts.txt", "w") as file:
         for name, data in accounts.items():
             file.write(f"68,{name},{data['password']},{data['balance']}\n")
 
-# ========================= withdraw =============================================
+# ========================= withdraw system =============================================
 def withdraw(accounts, user_name):
     amount = int(input("Enter your withdraw amount: "))
 
@@ -53,11 +59,14 @@ def withdraw(accounts, user_name):
         print("Transaction successful!")
         print("Your new balance is:", accounts[user_name]["balance"])
         save_new_updates(accounts)
+
+        with open("history.txt","a") as file:
+            file.write(f"withdraw/{accounts[user_name]["balance"]}/{user_name}\n")
     
     else:
         print(" Please check the amount.")
 
-# ========================= deposit ==============================================================
+# ========================= deposit system ==============================================================
 def deposit(accounts, user_name):
     amount = int(input("Enter your deposit amount: "))
 
@@ -66,17 +75,22 @@ def deposit(accounts, user_name):
         print("Deposit successful!")
         print("Your new balance is:", accounts[user_name]["balance"])
         save_new_updates(accounts)
+
+        
+        with open("history.txt","a") as file:
+            file.write(f"deposit/{accounts[user_name]["balance"]}/{user_name}\n")
     
     else:
         print("Invalid deposit amount!")
 
-# ========================= code for app ==============================================
+# ========================= main code ==============================================
+start = input(":")
 if start == "1":
    create_account()
 
 elif start == "2":
     accounts = load_accounts()
-    print("(((φ(◎ロ◎;)φ)))")
+    print("==================")
     user_name = input("Enter your username: ")
     password = input("Enter your password: ")
 
@@ -85,11 +99,9 @@ elif start == "2":
         while True:
             print("===============Select an option======================\n"
                            "Check Balance (c)\n"
-                           "\n"
                            "Withdraw Money (w)\n"
-                           "\n"
                            "Deposit Money (d)\n"
-                           "\n"
+                           "transaction history (t)"
                            "Exit (e): ")
             option=input(":")
             
@@ -97,15 +109,18 @@ elif start == "2":
                 print("Your balance is:", accounts[user_name]["balance"])
             
             elif option == "w":
-                print("")
                 withdraw(accounts, user_name)
             
             elif option == "d":
                 deposit(accounts, user_name)
-            
+
+            elif option == "t":
+                story()
+
             elif option == "e":
                 print("Thank you for use banking!")
                 break
+            
             
             else:
                 print("Invalid option. Please try again.")
